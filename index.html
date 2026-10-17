@@ -1,0 +1,1585 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ĐÀO MATH - Hệ Thống Khảo Sát & Thi Trực Tuyến Đề 01</title>
+  
+  <!-- File cấu hình quản trị bật/tắt đề thi -->
+  <script src="config.js"></script>
+
+  <!-- MathJax Configuration & Loader -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async onerror="this.onerror=null;this.src='tex-mml-chtml.js';"></script>
+
+  <style>
+    :root {
+      --primary: #0f4c81;
+      --primary-dark: #0a3258;
+      --primary-light: #e8f1f8;
+      --secondary: #b22222;
+      --secondary-light: #fdf2f2;
+      --success: #198754;
+      --success-light: #e8f5e9;
+      --danger: #dc3545;
+      --danger-light: #ffebee;
+      --gray-bg: #f5f7fa;
+      --card-bg: #ffffff;
+      --text: #2c3e50;
+      --text-muted: #6c757d;
+      --border: #dcdfe6;
+      --shadow: 0 4px 16px rgba(15, 76, 129, 0.08);
+      --radius: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--gray-bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* Header */
+    header {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      padding: 14px 24px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand img {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: white;
+      padding: 2px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+
+    .brand-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+
+    .brand-subtitle {
+      font-size: 0.82rem;
+      opacity: 0.9;
+    }
+
+    .timer-badge {
+      background: rgba(255, 255, 255, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 8px 16px;
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1.15rem;
+      font-weight: 700;
+      backdrop-filter: blur(4px);
+    }
+
+    .timer-badge.warning {
+      background: #b22222;
+      animation: pulse 1s infinite alternate;
+    }
+
+    @keyframes pulse {
+      from { transform: scale(1); }
+      to { transform: scale(1.05); }
+    }
+
+    /* Admin Bar */
+    .admin-bar {
+      background: #fff3cd;
+      border-bottom: 2px solid #ffeeba;
+      color: #856404;
+      padding: 10px 20px;
+      font-size: 0.9rem;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .admin-bar.active {
+      display: flex;
+    }
+
+    .admin-toggle-btn {
+      padding: 6px 14px;
+      font-weight: bold;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .admin-toggle-btn.btn-close {
+      background: #dc3545;
+      color: white;
+    }
+
+    .admin-toggle-btn.btn-open {
+      background: #198754;
+      color: white;
+    }
+
+    /* Screen Management: 1. Login Screen, 2. Closed Screen, 3. Exam Screen */
+    .screen-section {
+      display: none;
+    }
+    .screen-section.active {
+      display: block;
+    }
+
+    /* Welcome / Registration Screen */
+    .welcome-container {
+      max-width: 580px;
+      margin: 50px auto;
+      padding: 0 16px;
+    }
+
+    .welcome-card {
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+      padding: 36px;
+      border: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .welcome-card h2 {
+      color: var(--primary);
+      margin-bottom: 8px;
+      font-size: 1.6rem;
+    }
+
+    .welcome-card p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 24px;
+    }
+
+    .form-group-login {
+      text-align: left;
+      margin-bottom: 18px;
+    }
+
+    .form-group-login label {
+      display: block;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 6px;
+      font-size: 0.9rem;
+    }
+
+    .form-group-login input {
+      width: 100%;
+      padding: 12px 16px;
+      font-size: 1rem;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .form-group-login input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(15, 76, 129, 0.15);
+    }
+
+    .btn-start-exam {
+      width: 100%;
+      padding: 14px;
+      font-size: 1.15rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(15, 76, 129, 0.3);
+      transition: all 0.2s;
+      margin-top: 10px;
+    }
+
+    .btn-start-exam:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(15, 76, 129, 0.4);
+    }
+
+    /* Closed Screen */
+    .closed-container {
+      max-width: 600px;
+      margin: 80px auto;
+      text-align: center;
+      padding: 40px;
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+    }
+
+    .closed-icon {
+      font-size: 4rem;
+      margin-bottom: 16px;
+    }
+
+    /* Exam Layout */
+    .exam-container {
+      max-width: 1200px;
+      margin: 24px auto;
+      padding: 0 16px;
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 24px;
+    }
+
+    @media (max-width: 900px) {
+      .exam-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
+      border: 1px solid var(--border);
+    }
+
+    /* Section badges */
+    .section-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--primary);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 14px;
+    }
+
+    .section-badge.secondary {
+      background: var(--secondary);
+    }
+
+    .section-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+      font-style: italic;
+    }
+
+    /* Question Card */
+    .question-block {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 18px;
+      margin-bottom: 20px;
+      background: #fafbfc;
+      transition: all 0.2s;
+    }
+
+    .question-block:hover {
+      border-color: #b0c4de;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    .q-header {
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .q-points {
+      font-size: 0.8rem;
+      color: var(--secondary);
+      background: var(--secondary-light);
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-weight: 600;
+    }
+
+    .q-content {
+      font-size: 1rem;
+      margin-bottom: 16px;
+      line-height: 1.7;
+    }
+
+    /* Part 1 Options */
+    .options-grid {
+      display: grid;
+      gap: 10px;
+    }
+    .options-grid.grid-4 { grid-template-columns: repeat(4, 1fr); }
+    .options-grid.grid-2 { grid-template-columns: repeat(2, 1fr); }
+    .options-grid.grid-1 { grid-template-columns: 1fr; }
+
+    @media (max-width: 768px) {
+      .options-grid.grid-4, .options-grid.grid-2 { grid-template-columns: 1fr; }
+    }
+
+    .option-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 6px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 0.95rem;
+    }
+
+    .option-label:hover {
+      background: var(--primary-light);
+      border-color: var(--primary);
+    }
+
+    .option-label input[type="radio"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--primary);
+    }
+
+    .option-label.selected {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      font-weight: 600;
+    }
+
+    .option-label.correct {
+      background: var(--success-light) !important;
+      border-color: var(--success) !important;
+      color: var(--success) !important;
+      font-weight: bold;
+    }
+
+    .option-label.wrong {
+      background: var(--danger-light) !important;
+      border-color: var(--danger) !important;
+      color: var(--danger) !important;
+      text-decoration: line-through;
+    }
+
+    /* Part 2: True / False table */
+    .tf-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      background: white;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .tf-table th, .tf-table td {
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    .tf-table th {
+      background: #f1f4f8;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .tf-cell {
+      text-align: center;
+      width: 140px;
+    }
+
+    .tf-btn-group {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .tf-choice {
+      padding: 6px 14px;
+      border-radius: 4px;
+      border: 1.5px solid var(--border);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      background: white;
+      transition: all 0.2s;
+    }
+
+    .tf-choice.active-true {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .tf-choice.active-false {
+      background: var(--secondary);
+      color: white;
+      border-color: var(--secondary);
+    }
+
+    /* Part 3: Short answer inputs */
+    .short-input-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .short-input-box input {
+      padding: 10px 14px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      border: 2px solid var(--border);
+      border-radius: 6px;
+      width: 160px;
+      text-align: center;
+      letter-spacing: 1px;
+    }
+
+    .short-input-box input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    /* Explanations (Ẩn hoàn toàn trong lúc thi, Chỉ hiện sau khi nộp bài) */
+    .explanation-box {
+      margin-top: 14px;
+      padding: 14px;
+      background: #eef5fc;
+      border-left: 4px solid var(--primary);
+      border-radius: 0 6px 6px 0;
+      display: none;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .explanation-box.show {
+      display: block;
+      animation: fadeIn 0.4s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Sidebar Palette */
+    .sidebar-sticky {
+      position: sticky;
+      top: 96px;
+    }
+
+    .palette-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .palette-btn {
+      width: 100%;
+      aspect-ratio: 1;
+      border: 1px solid var(--border);
+      background: white;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .palette-btn:hover {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .palette-btn.answered {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .palette-btn.correct {
+      background: var(--success) !important;
+      color: white !important;
+      border-color: var(--success) !important;
+    }
+
+    .palette-btn.wrong {
+      background: var(--danger) !important;
+      color: white !important;
+      border-color: var(--danger) !important;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--secondary), #8b0000);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(178, 34, 34, 0.3);
+      transition: all 0.2s;
+      margin-top: 20px;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(178, 34, 34, 0.4);
+    }
+
+    /* Score Summary Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.65);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 16px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-card {
+      background: white;
+      max-width: 560px;
+      width: 100%;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      text-align: center;
+      animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes modalPop {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .score-circle {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: var(--primary-light);
+      border: 4px solid var(--primary);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 16px auto;
+    }
+
+    .score-num {
+      font-size: 2.6rem;
+      font-weight: 900;
+      color: var(--primary);
+      line-height: 1;
+    }
+
+    .score-total {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .score-breakdown {
+      margin: 20px 0;
+      text-align: left;
+      background: #f8fafc;
+      padding: 14px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+    }
+
+    .score-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      border-bottom: 1px dashed var(--border);
+    }
+
+    .score-row:last-child {
+      border-bottom: none;
+    }
+
+    .modal-btn {
+      padding: 12px 24px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .essay-card {
+      background: #fffdfa;
+      border: 1.5px solid #f2e2cf;
+      border-radius: 8px;
+      padding: 18px;
+      margin-bottom: 18px;
+    }
+
+    .essay-card h4 {
+      color: #92540d;
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="header-content">
+      <div class="brand">
+        <img src="logo.png" alt="Logo Đào Math" onerror="this.style.display='none'">
+        <div>
+          <div class="brand-title">CLB TOÁN HỌC ĐÀO MATH</div>
+          <div class="brand-subtitle">Hệ Thống Thi Trực Tuyến Chuyên Sâu - Hotline/Zalo: 0876.809.509</div>
+        </div>
+      </div>
+      <div class="timer-badge" id="timerBadge" style="display: none;">
+        <span>⏱️</span>
+        <span id="timerText">90:00</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Admin Bar (Chỉ hiển thị khi Thầy truy cập với mã bí mật trên link: ?admin=daomath2026) -->
+  <div class="admin-bar" id="adminBar">
+    <div>
+      <strong>KHU VỰC QUẢN TRỊ CỦA GIÁO VIÊN:</strong> Trạng thái đề thi hiện tại: 
+      <span id="adminStatusText" style="font-weight: bold; text-transform: uppercase;">ĐANG MỞ</span>
+    </div>
+    <button class="admin-toggle-btn btn-close" id="btnAdminToggle" onclick="adminToggleExamStatus()">ĐÓNG ĐỀ THI NGAY</button>
+  </div>
+
+  <!-- ================= SCREEN 1: CLOSED NOTIFICATION SCREEN ================= -->
+  <div class="screen-section" id="screenClosed">
+    <div class="closed-container">
+      <div class="closed-icon">🔒</div>
+      <h2 style="color: var(--secondary); margin-bottom: 12px;">ĐỀ THI ĐÃ TẠM KHÓA</h2>
+      <p style="font-size: 1.05rem; line-height: 1.7; color: var(--text);" id="closedCustomMessage">
+        Đề thi hiện đang tạm khóa hoặc đã kết thúc thời gian làm bài theo quy định của giáo viên.
+      </p>
+      <div style="margin-top: 24px; padding: 12px; background: #fdf2f2; border-radius: 6px; font-weight: 600; color: var(--secondary);">
+        Liên hệ Thầy Dũng Đào: 0876.809.509 để biết thêm thông tin.
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= SCREEN 2: STUDENT REGISTRATION (BẮT BUỘC ĐIỀN TÊN) ================= -->
+  <div class="screen-section" id="screenWelcome">
+    <div class="welcome-container">
+      <div class="welcome-card">
+        <h2>BÀI THI GIỮA KÌ I - MÔN TOÁN 10</h2>
+        <p>Bộ đề khảo sát chất lượng kiến thức - Năm học 2025 - 2026<br><b>Mã đề: 101 | Thời gian làm bài: 90 phút</b></p>
+
+        <form id="loginForm" onsubmit="handleStartExam(event)">
+          <div class="form-group-login">
+            <label for="inputStudentName">Họ và tên học sinh <span style="color: red;">*</span>:</label>
+            <input type="text" id="inputStudentName" placeholder="Nhập đầy đủ Họ và Tên..." required autofocus>
+          </div>
+
+          <div class="form-group-login">
+            <label for="inputStudentClass">Trường / Lớp <span style="color: red;">*</span>:</label>
+            <input type="text" id="inputStudentClass" placeholder="Ví dụ: 10A1 - THPT Chuyên..." required>
+          </div>
+
+          <div class="form-group-login">
+            <label for="inputStudentPhone">Số điện thoại / Zalo phụ huynh hoặc HS (tuỳ chọn):</label>
+            <input type="text" id="inputStudentPhone" placeholder="Ví dụ: 0987.xxx.xxx">
+          </div>
+
+          <div style="text-align: left; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 18px;">
+            ⚠️ <b>Quy chế thi:</b> Hệ thống tính giờ ngay khi bấm Bắt đầu. Trong quá trình làm bài, học sinh KHÔNG được xem đáp án. Kết quả điểm số và lời giải chi tiết sẽ được tự động hiển thị sau khi nộp bài.
+          </div>
+
+          <button type="submit" class="btn-start-exam">BẮT ĐẦU LÀM BÀI THI 🚀</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= SCREEN 3: MAIN EXAM TAKING INTERFACE ================= -->
+  <div class="screen-section" id="screenExam">
+    <div class="exam-container">
+      <div class="main-column">
+        <!-- Student Info Header In-Exam -->
+        <div class="card" style="padding: 16px 20px; background: #f0f7fd; border-color: #b9d8f3;">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <div>
+              <span style="font-size: 0.85rem; color: var(--text-muted);">Thí sinh dự thi:</span>
+              <div style="font-size: 1.15rem; font-weight: 800; color: var(--primary);" id="displayStudentName">NGUYỄN VĂN A</div>
+              <div style="font-size: 0.9rem; color: var(--text-muted);" id="displayStudentClass">Lớp 10A1</div>
+            </div>
+            <div style="text-align: right;">
+              <span style="font-size: 0.85rem; color: var(--text-muted);">Đề thi:</span>
+              <div style="font-size: 1.05rem; font-weight: 700; color: var(--secondary);">ĐỀ 01 - MÃ 101</div>
+              <div style="font-size: 0.85rem; color: var(--text-muted);">Toán 10 GDPT 2018</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PART 1 -->
+        <div class="card">
+          <div class="section-badge">PHẦN I. CÂU TRẮC NGHIỆM NHIỀU PHƯƠNG ÁN LỰA CHỌN (3,0 ĐIỂM)</div>
+          <div class="section-desc">Thí sinh trả lời từ Câu 1 đến Câu 12. Mỗi câu hỏi chọn đúng một phương án (A, B, C hoặc D). Mỗi câu đúng đạt 0,25 điểm.</div>
+          <div id="part1Container"></div>
+        </div>
+
+        <!-- PART 2 -->
+        <div class="card">
+          <div class="section-badge secondary">PHẦN II. CÂU TRẮC NGHIỆM ĐÚNG SAI (2,0 ĐIỂM)</div>
+          <div class="section-desc">Thí sinh trả lời Câu 1 và Câu 2. Trong mỗi ý a), b), c), d), chọn Đúng (Đ) hoặc Sai (S). Barem Bộ GD&ĐT: 1 ý = 0,1đ; 2 ý = 0,25đ; 3 ý = 0,5đ; 4 ý = 1,0đ.</div>
+          <div id="part2Container"></div>
+        </div>
+
+        <!-- PART 3 -->
+        <div class="card">
+          <div class="section-badge">PHẦN III. CÂU TRẮC NGHIỆM TRẢ LỜI NGẮN (2,0 ĐIỂM)</div>
+          <div class="section-desc">Thí sinh trả lời từ Câu 1 đến Câu 4. Điền trực tiếp kết quả vào ô trống. Mỗi câu đúng đạt 0,5 điểm.</div>
+          <div id="part3Container"></div>
+        </div>
+
+        <!-- PART 4 -->
+        <div class="card">
+          <div class="section-badge secondary">PHẦN IV. TỰ LUẬN (3,0 ĐIỂM)</div>
+          <div class="section-desc">Phần tự luận thí sinh trình bày ra giấy nộp cho giáo viên. Lời giải chi tiết và thang điểm chuẩn sẽ mở sau khi nộp bài.</div>
+          <div id="part4Container"></div>
+        </div>
+      </div>
+
+      <!-- Sidebar Palette -->
+      <div class="sidebar-column">
+        <div class="card sidebar-sticky">
+          <h4 style="color: var(--primary); margin-bottom: 8px;">ĐIỀU HƯỚNG CÂU HỎI</h4>
+          <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px;">Bấm số câu để cuộn tới câu hỏi tương ứng:</div>
+          
+          <div style="font-weight: 700; font-size: 0.85rem; margin-top: 10px; color: var(--primary);">Phần I: Trắc nghiệm (1 - 12)</div>
+          <div class="palette-grid" id="palettePart1"></div>
+
+          <div style="font-weight: 700; font-size: 0.85rem; margin-top: 14px; color: var(--secondary);">Phần II: Đúng / Sai (C1 - C2)</div>
+          <div class="palette-grid" id="palettePart2" style="grid-template-columns: repeat(4, 1fr);"></div>
+
+          <div style="font-weight: 700; font-size: 0.85rem; margin-top: 14px; color: var(--primary);">Phần III: Trả lời ngắn (1 - 4)</div>
+          <div class="palette-grid" id="palettePart3" style="grid-template-columns: repeat(4, 1fr);"></div>
+
+          <button type="button" class="submit-btn" id="btnSubmitExam" onclick="confirmSubmit()">NỘP BÀI THI</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Score Summary Modal (Hiện ngay khi nộp bài) -->
+  <div class="modal-overlay" id="scoreModal">
+    <div class="modal-card">
+      <h2 style="color: var(--primary);" id="modalStudentTitle">KẾT QUẢ BÀI THI CỦA BẠN</h2>
+      <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 4px;" id="modalTimeSpent">Thời gian hoàn thành: 0 phút | Mã đề: 101</p>
+      
+      <div class="score-circle">
+        <div class="score-num" id="modalScore">0,0</div>
+        <div class="score-total">/ 7,0 Điểm (TN)</div>
+      </div>
+
+      <div class="score-breakdown">
+        <div class="score-row">
+          <span>Phần I (Nhiều lựa chọn):</span>
+          <strong id="scoreP1">0,00 / 3,0 điểm</strong>
+        </div>
+        <div class="score-row">
+          <span>Phần II (Đúng / Sai):</span>
+          <strong id="scoreP2">0,00 / 2,0 điểm</strong>
+        </div>
+        <div class="score-row">
+          <span>Phần III (Trả lời ngắn):</span>
+          <strong id="scoreP3">0,00 / 2,0 điểm</strong>
+        </div>
+        <div class="score-row" style="color: var(--secondary);">
+          <span>Phần IV (Tự luận trên giấy):</span>
+          <strong>3,0 điểm (GV chấm)</strong>
+        </div>
+      </div>
+
+      <div style="font-size: 0.9rem; color: #198754; margin-bottom: 16px; font-weight: 600;">
+        🎉 Đã hoàn thành! Toàn bộ đáp án đúng và lời giải chi tiết đã được mở bên dưới.
+      </div>
+
+      <button class="modal-btn" onclick="closeModalAndReview()">Xem Lời Giải Chi Tiết Từng Câu</button>
+    </div>
+  </div>
+
+  <script>
+    // ================= DỮ LIỆU ĐỀ SỐ 01 =================
+    const examData = {
+      part1: [
+        {
+          id: 1,
+          question: "Trong các câu dưới đây, câu nào là một mệnh đề toán học?",
+          options: [
+            { key: "A", text: "Thời tiết mùa thu Hà Nội đẹp quá!" },
+            { key: "B", text: "Bạn có thích học môn Toán không?" },
+            { key: "C", text: "Số $17$ là một số nguyên tố." },
+            { key: "D", text: "Hãy tích cực ôn tập kiểm tra giữa kì!" }
+          ],
+          correct: "C",
+          layout: "grid-2",
+          explanation: "Câu C là một khẳng định đúng về một đối tượng toán học, do đó là mệnh đề toán học. Các câu A, D là câu cảm thán/cầu khiến, câu B là câu hỏi."
+        },
+        {
+          id: 2,
+          question: "Cho hai mệnh đề $P$: ``Tam giác $ABC$ là tam giác đều'' và $Q$: ``Tam giác $ABC$ có ba góc bằng nhau''. Phát biểu mệnh đề kéo theo $P \\Rightarrow Q$ dưới dạng điều kiện cần, điều kiện đủ nào sau đây là đúng?",
+          options: [
+            { key: "A", text: "Tam giác $ABC$ là tam giác đều là điều kiện đủ để tam giác $ABC$ có ba góc bằng nhau." },
+            { key: "B", text: "Tam giác $ABC$ có ba góc bằng nhau là điều kiện không cần để tam giác $ABC$ là tam giác đều." },
+            { key: "C", text: "Tam giác $ABC$ là tam giác đều không phải là điều kiện đủ để tam giác $ABC$ có ba góc bằng nhau." },
+            { key: "D", text: "Tam giác $ABC$ là tam giác đều là điều kiện cần nhưng không đủ để tam giác $ABC$ có ba góc bằng nhau." }
+          ],
+          correct: "A",
+          layout: "grid-1",
+          explanation: "Mệnh đề $P \\Rightarrow Q$ được phát biểu: $P$ là điều kiện đủ để có $Q$ (hoặc $Q$ là điều kiện cần để có $P$)."
+        },
+        {
+          id: 3,
+          question: "Cho mệnh đề $P\\colon \\text{`}\\forall x \\in \\mathbb{R},\\, x^2 - 2x + 5 > 0\\text{'}$. Mệnh đề phủ định $\\overline{P}$ của mệnh đề $P$ là",
+          options: [
+            { key: "A", text: "$\\overline{P}\\colon \\text{`}\\forall x \\in \\mathbb{R},\\, x^2 - 2x + 5 \\le 0\\text{'}$." },
+            { key: "B", text: "$\\overline{P}\\colon \\text{`}\\exists x \\in \\mathbb{R},\\, x^2 - 2x + 5 > 0\\text{'}$." },
+            { key: "C", text: "$\\overline{P}\\colon \\text{`}\\forall x \\in \\mathbb{R},\\, x^2 - 2x + 5 < 0\\text{'}$." },
+            { key: "D", text: "$\\overline{P}\\colon \\text{`}\\exists x \\in \\mathbb{R},\\, x^2 - 2x + 5 \\le 0\\text{'}$." }
+          ],
+          correct: "D",
+          layout: "grid-2",
+          explanation: "Phủ định của $\\forall x \\in X, P(x)$ là $\\exists x \\in X, \\overline{P(x)}$. Phủ định của dấu $>$ là dấu $\\le$."
+        },
+        {
+          id: 4,
+          question: "Cho tập hợp $A = \\{x \\in \\mathbb{R} \\mid -3 \\le x < 5\\}$. Viết tập hợp $A$ dưới dạng khoảng, đoạn, nửa khoảng ta được",
+          options: [
+            { key: "A", text: "$A = (-3; 5)$." },
+            { key: "B", text: "$A = [-3; 5]$." },
+            { key: "C", text: "$A = (-3; 5]$." },
+            { key: "D", text: "$A = [-3; 5)$." }
+          ],
+          correct: "D",
+          layout: "grid-4",
+          explanation: "Dấu $\\le$ ứng với móc vuông $[$ và dấu $<$ ứng với móc tròn $)$, do đó $A = [-3; 5)$."
+        },
+        {
+          id: 5,
+          question: "Cho hai tập hợp $X = \\{1; 2; 4; 7; 9\\}$ và $Y = \\{0; 2; 4; 6; 8\\}$. Tập hợp $X \\cap Y$ bằng tập hợp nào sau đây?",
+          options: [
+            { key: "A", text: "$\\{2; 4\\}$." },
+            { key: "B", text: "$\\{1; 7; 9\\}$." },
+            { key: "C", text: "$\\{0; 6; 8\\}$." },
+            { key: "D", text: "$\\{0; 1; 2; 4; 6; 7; 8; 9\\}$." }
+          ],
+          correct: "A",
+          layout: "grid-4",
+          explanation: "Giao của hai tập hợp $X$ và $Y$ là tập hợp gồm các phần tử vừa thuộc $X$ vừa thuộc $Y$, đó là $\\{2; 4\\}$."
+        },
+        {
+          id: 6,
+          question: "Bất phương trình nào dưới đây là bất phương trình bậc nhất hai ẩn $x$ và $y$?",
+          options: [
+            { key: "A", text: "$2x^2 - 3y < 5$." },
+            { key: "B", text: "$3x - 4y \\ge 1$." },
+            { key: "C", text: "$xy + 2x \\le 3$." },
+            { key: "D", text: "$x - 2y^2 > 0$." }
+          ],
+          correct: "B",
+          layout: "grid-4",
+          explanation: "Bất phương trình bậc nhất hai ẩn có dạng $ax + by \\le c$ (hoặc $\\ge, <, >$). Do đó $3x - 4y \\ge 1$ là bất phương trình bậc nhất hai ẩn."
+        },
+        {
+          id: 7,
+          question: "Cặp số $(x_0; y_0)$ nào dưới đây là một nghiệm của bất phương trình $2x - y + 3 > 0$?",
+          options: [
+            { key: "A", text: "$(-2; 1)$." },
+            { key: "B", text: "$(1; 6)$." },
+            { key: "C", text: "$(-3; 0)$." },
+            { key: "D", text: "$(0; 1)$." }
+          ],
+          correct: "D",
+          layout: "grid-4",
+          explanation: "Thay $(0; 1)$ vào BPT: $2(0) - 1 + 3 = 2 > 0$ (thoả mãn)."
+        },
+        {
+          id: 8,
+          question: "Điểm nào dưới đây thuộc miền nghiệm của hệ bất phương trình $\\begin{cases} x + y > 2 \\\\ 2x - y \\le 3 \\end{cases}$?",
+          options: [
+            { key: "A", text: "$M(1; 2)$." },
+            { key: "B", text: "$N(0; 1)$." },
+            { key: "C", text: "$P(3; 0)$." },
+            { key: "D", text: "$Q(-1; 1)$." }
+          ],
+          correct: "A",
+          layout: "grid-4",
+          explanation: "Thay $M(1; 2)$: $1 + 2 = 3 > 2$ (đúng) và $2(1) - 2 = 0 \\le 3$ (đúng). Vậy $M(1; 2)$ thuộc miền nghiệm."
+        },
+        {
+          id: 9,
+          question: "Với góc $\\alpha$ bất kì thoả mãn $0^\\circ \\le \\alpha \\le 180^\\circ$, đẳng thức nào sau đây là đúng?",
+          options: [
+            { key: "A", text: "$\\sin(180^\\circ - \\alpha) = -\\sin\\alpha$." },
+            { key: "B", text: "$\\cos(180^\\circ - \\alpha) = \\cos\\alpha$." },
+            { key: "C", text: "$\\sin(180^\\circ - \\alpha) = \\sin\\alpha$." },
+            { key: "D", text: "$\\tan(180^\\circ - \\alpha) = \\tan\\alpha$ ($\\alpha \\ne 90^\\circ$)." }
+          ],
+          correct: "C",
+          layout: "grid-2",
+          explanation: "Theo tính chất của hai góc bù nhau: $\\sin(180^\\circ - \\alpha) = \\sin\\alpha$, còn $\\cos, \\tan, \\cot$ mang dấu âm."
+        },
+        {
+          id: 10,
+          question: "Giá trị của biểu thức $T = \\sin 30^\\circ + \\cos 120^\\circ$ bằng",
+          options: [
+            { key: "A", text: "$1$." },
+            { key: "B", text: "$0$." },
+            { key: "C", text: "$\\sqrt{3}$." },
+            { key: "D", text: "$\\dfrac{1}{2}$." }
+          ],
+          correct: "B",
+          layout: "grid-4",
+          explanation: "Ta có $\\sin 30^\\circ = \\dfrac{1}{2}$ và $\\cos 120^\\circ = -\\cos 60^\\circ = -\\dfrac{1}{2} \\Rightarrow T = \\dfrac{1}{2} + \\left(-\\dfrac{1}{2}\\right) = 0$."
+        },
+        {
+          id: 11,
+          question: "Cho tam giác $ABC$ có độ dài ba cạnh $BC = a,\\, AC = b,\\, AB = c$. Theo định lí côsin, đẳng thức nào sau đây là đúng?",
+          options: [
+            { key: "A", text: "$a^2 = b^2 + c^2 + 2bc\\cos A$." },
+            { key: "B", text: "$a^2 = b^2 + c^2 - 2bc\\cos A$." },
+            { key: "C", text: "$a^2 = b^2 + c^2 - bc\\cos A$." },
+            { key: "D", text: "$a^2 = b^2 - c^2 - 2bc\\cos A$." }
+          ],
+          correct: "B",
+          layout: "grid-2",
+          explanation: "Định lí côsin chuẩn: $a^2 = b^2 + c^2 - 2bc\\cos A$."
+        },
+        {
+          id: 12,
+          question: "Cho tam giác $ABC$ có diện tích $S$, độ dài các cạnh $BC = a,\\, AC = b,\\, AB = c$. Công thức nào dưới đây là đúng?",
+          options: [
+            { key: "A", text: "$S = \\dfrac{1}{2}bc\\cos A$." },
+            { key: "B", text: "$S = bc\\sin A$." },
+            { key: "C", text: "$S = \\dfrac{1}{2}ab\\sin B$." },
+            { key: "D", text: "$S = \\dfrac{1}{2}ab\\sin C$." }
+          ],
+          correct: "D",
+          layout: "grid-4",
+          explanation: "Công thức tính diện tích theo hai cạnh và sin góc xen giữa: $S = \\dfrac{1}{2}ab\\sin C$."
+        }
+      ],
+      part2: [
+        {
+          id: 1,
+          content: "Cho hai tập hợp $A = \\{x \\in \\mathbb{Z} \\mid -2 \\le x \\le 3\\}$ và $B = (0; 5]$. Xét tính đúng sai của các khẳng định sau:",
+          items: [
+            { sub: "a", text: "Viết tập hợp $A$ bằng cách liệt kê các phần tử ta được $A = \\{-2; -1; 0; 1; 2; 3\\}.", correct: true, expl: "Liệt kê các số nguyên từ -2 đến 3 là {-2; -1; 0; 1; 2; 3}." },
+            { sub: "b", text: "Phần bù của tập hợp $B$ trong $\\mathbb{R}$ là $C_{\\mathbb{R}}B = (-\\infty; 0] \\cup (5; +\\infty)$.", correct: true, expl: "$C_{\\mathbb{R}}B = \\mathbb{R} \\setminus (0; 5] = (-\\infty; 0] \\cup (5; +\\infty)$." },
+            { sub: "c", text: "Tập hợp $A \\cap B$ có tất cả $4$ phần tử.", correct: false, expl: "$A \\cap B = \\{1; 2; 3\\}$ nên chỉ có đúng 3 phần tử (khẳng định 4 phần tử là Sai)." },
+            { sub: "d", text: "Có đúng $5$ giá trị nguyên của tham số $m$ để tập hợp $C = [m; m+2]$ là tập con của tập hợp $D = [-1; 6]$.", correct: false, expl: "Để $C \\subset D \\Leftrightarrow -1 \\le m$ và $m+2 \\le 6 \\Leftrightarrow -1 \\le m \\le 4 \\Rightarrow m \\in \\{-1; 0; 1; 2; 3; 4\\}$ (có 6 giá trị nguyên, nên khẳng định 5 giá trị là Sai)." }
+          ]
+        },
+        {
+          id: 2,
+          content: "Cho tam giác $ABC$ có độ dài các cạnh $AB = 5,\\, AC = 8$ và góc $\\widehat{BAC} = 60^\\circ$. Xét tính đúng sai của các khẳng định sau:",
+          items: [
+            { sub: "a", text: "Giá trị của $\\cos\\widehat{BAC}$ bằng $\\dfrac{1}{2}$.", correct: true, expl: "$\\cos 60^\\circ = \\dfrac{1}{2}$." },
+            { sub: "b", text: "Diện tích của tam giác $ABC$ được tính theo công thức $S = \\dfrac{1}{2}AB \\cdot AC \\cdot \\sin\\widehat{BAC}$ và bằng $10\\sqrt{3}$.", correct: true, expl: "$S = \\dfrac{1}{2} \\cdot 5 \\cdot 8 \\cdot \\sin 60^\\circ = 20 \\cdot \\dfrac{\\sqrt{3}}{2} = 10\\sqrt{3}$." },
+            { sub: "c", text: "Độ dài cạnh $BC$ bằng $7$.", correct: true, expl: "$BC = \\sqrt{5^2 + 8^2 - 2 \\cdot 5 \\cdot 8 \\cdot \\cos 60^\\circ} = \\sqrt{25 + 64 - 40} = \\sqrt{49} = 7$." },
+            { sub: "d", text: "Độ dài đường cao $AH$ kẻ từ đỉnh $A$ xuống cạnh $BC$ của tam giác $ABC$ lớn hơn $5$.", correct: false, expl: "$AH = \\dfrac{2S}{BC} = \\dfrac{20\\sqrt{3}}{7} \\approx 4{,}95 < 5$ (khẳng định lớn hơn 5 là Sai)." }
+          ]
+        }
+      ],
+      part3: [
+        {
+          id: 1,
+          question: "Cho hai tập hợp $A = (-\\infty; 5)$ và $B = [-2; 8]$. Biết rằng tập hợp $A \\cap B$ có dạng $[a; b)$. Tính giá trị của biểu thức $P = 2a + b$.",
+          correct: ["1", "1.0", "1,0"],
+          explanation: "Ta có $A \\cap B = [-2; 5) \\Rightarrow a = -2,\\, b = 5 \\Rightarrow P = 2(-2) + 5 = 1$. Đáp số điền: 1"
+        },
+        {
+          id: 2,
+          question: "Nhân dịp Tết Trung thu, bạn An mang $300\\,000$ đồng đi nhà sách để mua vở và bút tặng các em nhỏ vùng cao. Biết rằng giá một quyển vở là $12\\,000$ đồng và giá một chiếc bút bi là $5\\,000$ đồng. Hỏi nếu bạn An đã mua $12$ chiếc bút bi thì bạn có thể mua được tối đa bao nhiêu quyển vở?",
+          correct: ["20"],
+          explanation: "Tổng số tiền mua vở và bút: $12\\,000x + 12 \\times 5\\,000 \\le 300\\,000 \\Leftrightarrow 12\\,000x \\le 240\\,000 \\Leftrightarrow x \\le 20$. Vậy bạn An có thể mua tối đa 20 quyển vở."
+        },
+        {
+          id: 3,
+          question: "Cho góc $\\alpha$ thoả mãn $\\tan\\alpha = 3$. Tính giá trị của biểu thức $\\displaystyle M = \\dfrac{2\\sin\\alpha + 3\\cos\\alpha}{3\\sin\\alpha - 2\\cos\\alpha}$ (viết kết quả dưới dạng số thập phân làm tròn đến hai chữ số sau dấu phẩy).",
+          correct: ["1.29", "1,29"],
+          explanation: "Chia cả tử và mẫu cho $\\cos\\alpha \\ne 0$: $M = \\dfrac{2\\tan\\alpha + 3}{3\\tan\\alpha - 2} = \\dfrac{2(3) + 3}{3(3) - 2} = \\dfrac{9}{7} \\approx 1{,}2857 \\approx 1{,}29$."
+        },
+        {
+          id: 4,
+          question: "Một bác nông dân dự định làm một hàng rào hình chữ nhật để bao quanh một khu đất nông nghiệp giáp bờ một con sông thẳng (không cần rào phía bờ sông). Bác có sẵn $120\\text{ m}$ lưới thép để rào ba cạnh còn lại. Hỏi diện tích lớn nhất của khu đất mà bác nông dân có thể rào được là bao nhiêu mét vuông?",
+          correct: ["1800"],
+          explanation: "Gọi $x$ (m) là chiều rộng ($0 < x < 60$). Chiều dài dọc bờ sông là $120 - 2x$. Diện tích $S(x) = x(120 - 2x) = -2x^2 + 120x = -2(x - 30)^2 + 1800 \\le 1800\\text{ m}^2$. Đạt GTLN bằng 1800 khi $x = 30$."
+        }
+      ],
+      part4: [
+        {
+          id: 1,
+          title: "Câu 1 (1,0 điểm): Tập hợp & Bài toán thực tế Venn",
+          content: "a) Cho hai tập hợp $A = [-3; 4)$ và $B = (1; 6]$. Xác định $A \\cup B$ và $A \\setminus B$.<br>b) Lớp 10A có 40 học sinh: 22 bạn tham gia CLB Tiếng Anh, 18 bạn tham gia CLB Tin học, 8 bạn không tham gia CLB nào. Hỏi có bao nhiêu bạn tham gia cả 2 CLB?",
+          solution: "• <b>a)</b> $A \\cup B = [-3; 6]$ (0,25đ). $A \\setminus B = [-3; 1]$ (0,25đ).<br>• <b>b)</b> Số học sinh tham gia ít nhất 1 CLB: $n(E \\cup T) = 40 - 8 = 32$ (0,25đ).<br>Số học sinh tham gia cả 2 CLB: $n(E \\cap T) = 22 + 18 - 32 = 8$ học sinh (0,25đ)."
+        },
+        {
+          id: 2,
+          title: "Câu 2 (1,0 điểm): Lập hệ BPT bậc nhất hai ẩn & Tối ưu hoá lợi nhuận",
+          content: "Sản xuất bàn trà ($x$) và ghế tựa ($y$). Chế tác thô: bàn cần 3h, ghế cần 1h (tối đa 60h). Sơn bóng: bàn cần 1h, ghế cần 2h (tối đa 50h). Lãi: 500k/bàn, 400k/ghế.<br>a) Viết hệ BPT ràng buộc.<br>b) Tìm $(x; y)$ để tiền lãi lớn nhất.",
+          solution: "• <b>a)</b> Hệ BPT: $\\begin{cases} 3x + y \\le 60 \\\\ x + 2y \\le 50 \\\\ x \\ge 0, y \\ge 0 \\end{cases}$ (0,5đ).<br>• <b>b)</b> Tiền lãi $F(x; y) = 500x + 400y$. Miền nghiệm là tứ giác $OABC$ với $O(0;0), A(20;0), B(14;18), C(0;25)$.<br>Tính giá trị tại các đỉnh: $F(O)=0, F(A)=10000, F(B)=14200, F(C)=10000$.<br>Vậy lãi lớn nhất là <b>14,2 triệu đồng</b> khi sản xuất <b>14 bàn trà và 18 ghế tựa</b> (0,5đ)."
+        },
+        {
+          id: 3,
+          title: "Câu 3 (1,0 điểm): Hệ thức lượng & Đo đạc chiều cao thực tế",
+          content: "a) Cho $90^\\circ < \\alpha < 180^\\circ$ và $\\sin\\alpha = \\dfrac{3}{5}$. Tính $\\cos\\alpha, \\tan\\alpha$.<br>b) Đo tháp $CD$: chọn $AB = 40\\text{ m}$ thẳng hàng với chân tháp $D$. Góc nâng tại $A$ là $30^\\circ$, tại $B$ là $45^\\circ$. Tính chiều cao $CD$.",
+          solution: "• <b>a)</b> Vì $90^\\circ < \\alpha < 180^\\circ \\Rightarrow \\cos\\alpha < 0$.<br>$\\cos\\alpha = -\\sqrt{1 - (3/5)^2} = -\\dfrac{4}{5}$ (0,25đ); $\\tan\\alpha = \\dfrac{\\sin\\alpha}{\\cos\\alpha} = -\\dfrac{3}{4}$ (0,25đ).<br>• <b>b)</b> Trong $\\triangle ABC$: $\\widehat{ACB} = 45^\\circ - 30^\\circ = 15^\\circ$.<br>Theo định lí sin: $BC = \\dfrac{AB \\cdot \\sin 30^\\circ}{\\sin 15^\\circ} = \\dfrac{40 \\cdot \\sin 30^\\circ}{\\sin 15^\\circ} \\approx 77{,}27\\text{ m}$ (0,25đ).<br>Chiều cao tháp: $CD = BC \\cdot \\sin 45^\\circ \\approx 77{,}27 \\cdot \\dfrac{\\sqrt{2}}{2} \\approx \\mathbf{54{,}6\\text{ m}}$ (0,25đ)."
+        }
+      ]
+    };
+
+    // ================= STATE =================
+    let student = { name: "", class: "", phone: "" };
+    let userAnswers = { p1: {}, p2: {}, p3: {} };
+    let isSubmitted = false;
+    let timerInterval = null;
+    let secondsLeft = (window.EXAM_CONFIG?.durationMinutes || 90) * 60;
+
+    // Check trạng thái mở/khóa đề
+    function checkExamStatus() {
+      // Đọc trạng thái từ localStorage (nếu admin đã bấm tắt) hoặc từ file config.js
+      let currentStatus = window.EXAM_CONFIG?.isOpen ?? true;
+      const localOverride = localStorage.getItem("DAOMATH_EXAM_STATUS");
+      if (localOverride !== null) {
+        currentStatus = (localOverride === "open");
+      }
+
+      // Kiểm tra xem có phải Thầy đang truy cập quyền Quản trị qua URL không
+      const urlParams = new URLSearchParams(window.location.search);
+      const adminParam = urlParams.get('admin');
+      if (adminParam === window.EXAM_CONFIG?.adminKey) {
+        setupAdminBar(currentStatus);
+      }
+
+      // Điều hướng màn hình
+      if (!currentStatus) {
+        document.getElementById("closedCustomMessage").innerText = window.EXAM_CONFIG?.closedMessage;
+        showScreen("screenClosed");
+      } else {
+        showScreen("screenWelcome");
+      }
+    }
+
+    function setupAdminBar(currentStatus) {
+      const adminBar = document.getElementById("adminBar");
+      adminBar.classList.add("active");
+      updateAdminBarUI(currentStatus);
+    }
+
+    function updateAdminBarUI(isOpen) {
+      const statusText = document.getElementById("adminStatusText");
+      const toggleBtn = document.getElementById("btnAdminToggle");
+      if (isOpen) {
+        statusText.innerText = "ĐANG MỞ CHO HỌC SINH THI";
+        statusText.style.color = "#198754";
+        toggleBtn.innerText = "🔒 ĐÓNG ĐỀ THI NGAY";
+        toggleBtn.className = "admin-toggle-btn btn-close";
+      } else {
+        statusText.innerText = "ĐÃ ĐÓNG / TẠM KHÓA";
+        statusText.style.color = "#dc3545";
+        toggleBtn.innerText = "🔓 MỞ LẠI ĐỀ THI";
+        toggleBtn.className = "admin-toggle-btn btn-open";
+      }
+    }
+
+    function adminToggleExamStatus() {
+      const localOverride = localStorage.getItem("DAOMATH_EXAM_STATUS");
+      let currentStatus = (localOverride === null) ? (window.EXAM_CONFIG?.isOpen ?? true) : (localOverride === "open");
+      
+      const newStatus = !currentStatus;
+      localStorage.setItem("DAOMATH_EXAM_STATUS", newStatus ? "open" : "closed");
+      updateAdminBarUI(newStatus);
+
+      if (!newStatus) {
+        alert("ĐÃ ĐÓNG ĐỀ THI! Học sinh truy cập sẽ thấy thông báo tạm khóa.");
+        showScreen("screenClosed");
+      } else {
+        alert("ĐÃ MỞ LẠI ĐỀ THI! Học sinh có thể vào thi bình thường.");
+        showScreen("screenWelcome");
+      }
+    }
+
+    function showScreen(screenId) {
+      document.querySelectorAll(".screen-section").forEach(s => s.classList.remove("active"));
+      document.getElementById(screenId).classList.add("active");
+    }
+
+    // BẮT BUỘC ĐIỀN TÊN TRƯỚC KHI BẮT ĐẦU
+    function handleStartExam(e) {
+      e.preventDefault();
+      const name = document.getElementById("inputStudentName").value.trim();
+      const sClass = document.getElementById("inputStudentClass").value.trim();
+      const phone = document.getElementById("inputStudentPhone").value.trim();
+
+      if (!name || !sClass) {
+        alert("Vui lòng điền đầy đủ Họ tên và Lớp của bạn trước khi bắt đầu!");
+        return;
+      }
+
+      student.name = name;
+      student.class = sClass;
+      student.phone = phone;
+
+      document.getElementById("displayStudentName").innerText = student.name.toUpperCase();
+      document.getElementById("displayStudentClass").innerText = `Lớp: ${student.class}`;
+      document.getElementById("timerBadge").style.display = "flex";
+
+      showScreen("screenExam");
+      initExamContent();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function initExamContent() {
+      renderPart1();
+      renderPart2();
+      renderPart3();
+      renderPart4();
+      buildPalette();
+      startTimer();
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        window.MathJax.typesetPromise();
+      }
+    }
+
+    // Render Part 1
+    function renderPart1() {
+      const container = document.getElementById("part1Container");
+      container.innerHTML = examData.part1.map(q => `
+        <div class="question-block" id="q_p1_${q.id}">
+          <div class="q-header">
+            <span>Câu ${q.id}.</span>
+            <span class="q-points">0,25 điểm</span>
+          </div>
+          <div class="q-content">${q.question}</div>
+          <div class="options-grid ${q.layout}">
+            ${q.options.map(opt => `
+              <label class="option-label" id="opt_label_${q.id}_${opt.key}">
+                <input type="radio" name="p1_q${q.id}" value="${opt.key}" onchange="selectOption(${q.id}, '${opt.key}')">
+                <strong>${opt.key}.</strong>
+                <span>${opt.text}</span>
+              </label>
+            `).join('')}
+          </div>
+          <div class="explanation-box" id="expl_p1_${q.id}">
+            <strong>💡 Hướng dẫn giải chi tiết:</strong><br>${q.explanation}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Render Part 2
+    function renderPart2() {
+      const container = document.getElementById("part2Container");
+      container.innerHTML = examData.part2.map(q => `
+        <div class="question-block" id="q_p2_${q.id}">
+          <div class="q-header">
+            <span>Câu ${q.id}. (Phần II)</span>
+            <span class="q-points">Tối đa 1,0 điểm</span>
+          </div>
+          <div class="q-content">${q.content}</div>
+          <table class="tf-table">
+            <thead>
+              <tr>
+                <th style="width: 50px; text-align: center;">Ý</th>
+                <th>Khẳng định</th>
+                <th style="width: 140px; text-align: center;">Chọn Đ / S</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${q.items.map(item => `
+                <tr id="row_p2_${q.id}_${item.sub}">
+                  <td style="text-align: center; font-weight: bold; color: var(--primary);">${item.sub})</td>
+                  <td>${item.text}</td>
+                  <td class="tf-cell">
+                    <div class="tf-btn-group">
+                      <button type="button" class="tf-choice" id="btn_p2_${q.id}_${item.sub}_T" onclick="selectTF(${q.id}, '${item.sub}', true)">Đúng</button>
+                      <button type="button" class="tf-choice" id="btn_p2_${q.id}_${item.sub}_F" onclick="selectTF(${q.id}, '${item.sub}', false)">Sai</button>
+                    </div>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+          <div class="explanation-box" id="expl_p2_${q.id}">
+            <strong>💡 Hướng dẫn giải chi tiết:</strong><br>
+            ${q.items.map(i => `<b>${i.sub}) ${i.correct ? "Đúng" : "Sai"}:</b> ${i.expl}`).join('<br>')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Render Part 3
+    function renderPart3() {
+      const container = document.getElementById("part3Container");
+      container.innerHTML = examData.part3.map(q => `
+        <div class="question-block" id="q_p3_${q.id}">
+          <div class="q-header">
+            <span>Câu ${q.id}. (Phần III)</span>
+            <span class="q-points">0,5 điểm</span>
+          </div>
+          <div class="q-content">${q.question}</div>
+          <div class="short-input-box">
+            <label style="font-weight: 600; color: var(--primary);">Đáp số của bạn:</label>
+            <input type="text" id="input_p3_${q.id}" placeholder="Điền số..." oninput="handleShortInput(${q.id}, this.value)">
+            <span style="font-size: 0.85rem; color: var(--text-muted);">(Hỗ trợ cả số nguyên hoặc số thập phân)</span>
+          </div>
+          <div class="explanation-box" id="expl_p3_${q.id}">
+            <strong>💡 Hướng dẫn giải chi tiết:</strong><br>${q.explanation}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Render Part 4
+    function renderPart4() {
+      const container = document.getElementById("part4Container");
+      container.innerHTML = examData.part4.map(q => `
+        <div class="essay-card">
+          <h4>${q.title}</h4>
+          <div style="margin-bottom: 10px; line-height: 1.6;">${q.content}</div>
+          <!-- Lời giải tự luận bị ẩn trong lúc làm bài, chỉ hiện khi đã nộp bài -->
+          <div class="explanation-box" id="expl_p4_${q.id}">
+            <strong>🎯 Hướng dẫn chấm & Thang điểm chi tiết:</strong><br>
+            ${q.solution}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Build Palette Navigation
+    function buildPalette() {
+      const palP1 = document.getElementById("palettePart1");
+      palP1.innerHTML = examData.part1.map(q => `
+        <button type="button" class="palette-btn" id="pal_btn_p1_${q.id}" onclick="scrollToElem('q_p1_${q.id}')">${q.id}</button>
+      `).join('');
+
+      const palP2 = document.getElementById("palettePart2");
+      let p2Btns = "";
+      examData.part2.forEach(q => {
+        ['a', 'b', 'c', 'd'].forEach(sub => {
+          p2Btns += `<button type="button" class="palette-btn" id="pal_btn_p2_${q.id}_${sub}" onclick="scrollToElem('q_p2_${q.id}')">${q.id}${sub}</button>`;
+        });
+      });
+      palP2.innerHTML = p2Btns;
+
+      const palP3 = document.getElementById("palettePart3");
+      palP3.innerHTML = examData.part3.map(q => `
+        <button type="button" class="palette-btn" id="pal_btn_p3_${q.id}" onclick="scrollToElem('q_p3_${q.id}')">C${q.id}</button>
+      `).join('');
+    }
+
+    function selectOption(qId, key) {
+      if (isSubmitted) return;
+      userAnswers.p1[qId] = key;
+      examData.part1.find(q => q.id === qId).options.forEach(opt => {
+        const lbl = document.getElementById(`opt_label_${qId}_${opt.key}`);
+        if (opt.key === key) lbl.classList.add("selected");
+        else lbl.classList.remove("selected");
+      });
+      document.getElementById(`pal_btn_p1_${qId}`).classList.add("answered");
+    }
+
+    function selectTF(qId, sub, val) {
+      if (isSubmitted) return;
+      if (!userAnswers.p2[qId]) userAnswers.p2[qId] = {};
+      userAnswers.p2[qId][sub] = val;
+
+      const btnT = document.getElementById(`btn_p2_${qId}_${sub}_T`);
+      const btnF = document.getElementById(`btn_p2_${qId}_${sub}_F`);
+
+      if (val === true) {
+        btnT.classList.add("active-true");
+        btnF.classList.remove("active-false");
+      } else {
+        btnF.classList.add("active-false");
+        btnT.classList.remove("active-true");
+      }
+
+      document.getElementById(`pal_btn_p2_${qId}_${sub}`).classList.add("answered");
+    }
+
+    function handleShortInput(qId, val) {
+      if (isSubmitted) return;
+      const clean = val.trim();
+      if (clean.length > 0) {
+        userAnswers.p3[qId] = clean;
+        document.getElementById(`pal_btn_p3_${qId}`).classList.add("answered");
+      } else {
+        delete userAnswers.p3[qId];
+        document.getElementById(`pal_btn_p3_${qId}`).classList.remove("answered");
+      }
+    }
+
+    function scrollToElem(id) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+
+    function startTimer() {
+      const timerText = document.getElementById("timerText");
+      const timerBadge = document.getElementById("timerBadge");
+
+      timerInterval = setInterval(() => {
+        if (secondsLeft <= 0) {
+          clearInterval(timerInterval);
+          alert("Đã hết 90 phút làm bài! Hệ thống tự động thu bài của bạn.");
+          submitExam();
+          return;
+        }
+        secondsLeft--;
+        const m = Math.floor(secondsLeft / 60);
+        const s = secondsLeft % 60;
+        timerText.innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+
+        if (secondsLeft <= 300) {
+          timerBadge.classList.add("warning");
+        }
+      }, 1000);
+    }
+
+    function confirmSubmit() {
+      if (isSubmitted) {
+        document.getElementById("scoreModal").classList.add("active");
+        return;
+      }
+      const unansweredP1 = examData.part1.filter(q => !userAnswers.p1[q.id]).length;
+      let unansweredP2 = 0;
+      examData.part2.forEach(q => {
+        ['a', 'b', 'c', 'd'].forEach(sub => {
+          if (!userAnswers.p2[q.id] || userAnswers.p2[q.id][sub] === undefined) unansweredP2++;
+        });
+      });
+      const unansweredP3 = examData.part3.filter(q => !userAnswers.p3[q.id]).length;
+      const totalUnanswered = unansweredP1 + unansweredP2 + unansweredP3;
+
+      let msg = "Bạn có chắc chắn muốn nộp bài thi không?";
+      if (totalUnanswered > 0) {
+        msg = `Bạn còn ${totalUnanswered} câu/ý chưa làm xong. Bạn có chắc chắn muốn nộp bài ngay bây giờ?`;
+      }
+      if (confirm(msg)) {
+        submitExam();
+      }
+    }
+
+    // NỘP BÀI -> TÍNH ĐIỂM -> HIỆN ĐÁP ÁN & GIẢI THÍCH
+    function submitExam() {
+      isSubmitted = true;
+      clearInterval(timerInterval);
+
+      document.querySelectorAll("input").forEach(i => i.disabled = true);
+      document.querySelectorAll(".tf-choice").forEach(b => b.disabled = true);
+      document.getElementById("btnSubmitExam").innerText = "XEM ĐIỂM & ĐÁP ÁN";
+      document.getElementById("btnSubmitExam").style.background = "#0f4c81";
+
+      // 1. Chấm Phần I
+      let scoreP1 = 0;
+      examData.part1.forEach(q => {
+        const userChoice = userAnswers.p1[q.id];
+        const isRight = (userChoice === q.correct);
+        const palBtn = document.getElementById(`pal_btn_p1_${q.id}`);
+
+        if (isRight) {
+          scoreP1 += 0.25;
+          palBtn.classList.remove("answered");
+          palBtn.classList.add("correct");
+        } else {
+          palBtn.classList.remove("answered");
+          palBtn.classList.add("wrong");
+        }
+
+        q.options.forEach(opt => {
+          const lbl = document.getElementById(`opt_label_${q.id}_${opt.key}`);
+          if (opt.key === q.correct) {
+            lbl.classList.add("correct");
+          } else if (opt.key === userChoice) {
+            lbl.classList.add("wrong");
+          }
+        });
+
+        // Bật hiển thị giải thích
+        document.getElementById(`expl_p1_${q.id}`).classList.add("show");
+      });
+
+      // 2. Chấm Phần II (1: 0.1, 2: 0.25, 3: 0.5, 4: 1.0)
+      let scoreP2 = 0;
+      examData.part2.forEach(q => {
+        let correctCount = 0;
+        q.items.forEach(item => {
+          const userVal = userAnswers.p2[q.id] ? userAnswers.p2[q.id][item.sub] : undefined;
+          const isItemRight = (userVal === item.correct);
+          const palBtn = document.getElementById(`pal_btn_p2_${q.id}_${item.sub}`);
+          const row = document.getElementById(`row_p2_${q.id}_${item.sub}`);
+
+          if (isItemRight) {
+            correctCount++;
+            palBtn.classList.remove("answered");
+            palBtn.classList.add("correct");
+            row.style.background = "var(--success-light)";
+          } else {
+            palBtn.classList.remove("answered");
+            palBtn.classList.add("wrong");
+            row.style.background = "var(--danger-light)";
+          }
+        });
+
+        if (correctCount === 1) scoreP2 += 0.1;
+        else if (correctCount === 2) scoreP2 += 0.25;
+        else if (correctCount === 3) scoreP2 += 0.5;
+        else if (correctCount === 4) scoreP2 += 1.0;
+
+        document.getElementById(`expl_p2_${q.id}`).classList.add("show");
+      });
+
+      // 3. Chấm Phần III (0.5đ mỗi câu)
+      let scoreP3 = 0;
+      examData.part3.forEach(q => {
+        const userVal = (userAnswers.p3[q.id] || "").trim().toLowerCase();
+        const isRight = q.correct.some(c => c.toLowerCase() === userVal);
+        const palBtn = document.getElementById(`pal_btn_p3_${q.id}`);
+        const inputElem = document.getElementById(`input_p3_${q.id}`);
+
+        if (isRight) {
+          scoreP3 += 0.5;
+          palBtn.classList.remove("answered");
+          palBtn.classList.add("correct");
+          inputElem.style.borderColor = "var(--success)";
+          inputElem.style.background = "var(--success-light)";
+          inputElem.style.color = "var(--success)";
+        } else {
+          palBtn.classList.remove("answered");
+          palBtn.classList.add("wrong");
+          inputElem.style.borderColor = "var(--danger)";
+          inputElem.style.background = "var(--danger-light)";
+          inputElem.style.color = "var(--danger)";
+        }
+
+        document.getElementById(`expl_p3_${q.id}`).classList.add("show");
+      });
+
+      // Mở lời giải Phần IV
+      examData.part4.forEach(q => {
+        const explP4 = document.getElementById(`expl_p4_${q.id}`);
+        if (explP4) explP4.classList.add("show");
+      });
+
+      // Tổng hợp kết quả
+      const totalScore = (scoreP1 + scoreP2 + scoreP3).toFixed(2);
+      const timeUsedMins = Math.ceil(((window.EXAM_CONFIG?.durationMinutes || 90) * 60 - secondsLeft) / 60);
+
+      document.getElementById("modalStudentTitle").innerText = `KẾT QUẢ: ${student.name.toUpperCase()} (${student.class})`;
+      document.getElementById("modalTimeSpent").innerText = `Thời gian làm bài: ${timeUsedMins} phút | Mã đề: 101`;
+      document.getElementById("modalScore").innerText = totalScore.replace('.', ',');
+      document.getElementById("scoreP1").innerText = `${scoreP1.toFixed(2).replace('.', ',')} / 3,00 điểm`;
+      document.getElementById("scoreP2").innerText = `${scoreP2.toFixed(2).replace('.', ',')} / 2,00 điểm`;
+      document.getElementById("scoreP3").innerText = `${scoreP3.toFixed(2).replace('.', ',')} / 2,00 điểm`;
+
+      // Lưu kết quả bài làm vào bộ nhớ trình duyệt để Thầy có thể xem danh sách
+      saveSubmissionHistory({
+        name: student.name,
+        class: student.class,
+        phone: student.phone,
+        score: totalScore,
+        p1: scoreP1.toFixed(2),
+        p2: scoreP2.toFixed(2),
+        p3: scoreP3.toFixed(2),
+        timeMinutes: timeUsedMins,
+        timestamp: new Date().toLocaleString("vi-VN")
+      });
+
+      document.getElementById("scoreModal").classList.add("active");
+    }
+
+    function saveSubmissionHistory(record) {
+      try {
+        let history = JSON.parse(localStorage.getItem("DAOMATH_SUBMISSIONS") || "[]");
+        history.unshift(record);
+        localStorage.setItem("DAOMATH_SUBMISSIONS", JSON.stringify(history));
+      } catch (err) {
+        console.error("Lưu lịch sử lỗi:", err);
+      }
+    }
+
+    function closeModalAndReview() {
+      document.getElementById("scoreModal").classList.remove("active");
+      scrollToElem("q_p1_1");
+    }
+
+    window.addEventListener("DOMContentLoaded", checkExamStatus);
+  </script>
+</body>
+</html>
